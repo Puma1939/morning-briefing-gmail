@@ -291,6 +291,13 @@ def build_html(data: dict[str, pd.DataFrame]) -> str:
   .archetipo {{ color:{MUTED}; font-style:italic; margin:6px 0 0; }}
   .note {{ color:{MUTED}; font-size:13.5px; }}
   @media (max-width:760px) {{ .metrics,.cards {{ grid-template-columns:1fr 1fr; }} h1 {{ font-size:28px; }} }}
+  @page {{ size:A4; margin:16mm 14mm; }}
+  @media print {{
+    main {{ padding:0; max-width:none; }}
+    h2 {{ break-after:avoid; }}
+    img, table, .card, .metric, .summary {{ break-inside:avoid; }}
+    .cards {{ break-inside:avoid; }}
+  }}
 </style>
 </head>
 <body>
@@ -374,6 +381,19 @@ def main() -> None:
     REPORT_HTML.write_text(html, encoding="utf-8")
     print(f"OK - report scritto in {REPORT_HTML.relative_to(ROOT)}")
     print(f"     grafici in {CHARTS.relative_to(ROOT)}/")
+    _write_pdf(html)
+
+
+def _write_pdf(html: str) -> None:
+    """Genera il PDF dal report. Richiede weasyprint (vedi requirements.txt)."""
+    pdf_path = REPORT_HTML.with_suffix(".pdf")
+    try:
+        from weasyprint import HTML
+    except ImportError:
+        print("     PDF saltato: installa weasyprint (pip install weasyprint)")
+        return
+    HTML(string=html, base_url=str(ROOT)).write_pdf(str(pdf_path))
+    print(f"     PDF scritto in {pdf_path.relative_to(ROOT)}")
 
 
 if __name__ == "__main__":
