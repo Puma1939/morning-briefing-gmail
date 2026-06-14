@@ -9,27 +9,62 @@ presentare.
 ## Cosa contiene
 
 ```
-data/                         export CSV (input della pipeline)
+pharma/                       pacchetto di analisi
+  scoring.py                  ricostruzione metriche e punteggi dai dati grezzi
+  enrichment.py               schema e merge dei dati di arricchimento
+  financials.py               modulo commercialisti: bilancio vs potenziale
+  schede.py                   schede per singola farmacia (HTML/PDF)
+data/                         CSV di input
   farmacie.csv                422 farmacie con scoring per NIL
   parafarmacie_attive.csv     95 parafarmacie attive
   nil_scoring.csv             69 NIL con metriche e archetipo
   fonti.csv                   dataset e date di aggiornamento
-scripts/build_report.py       pipeline: legge i CSV -> grafici -> report HTML
+  enrichment_farmacie.csv     arricchimento (orari, servizi, social...) - da popolare
+  financials_farmacie.csv     dati di bilancio - template da popolare
+scripts/
+  build_report.py             report territoriale -> HTML + PDF + grafici
+  build_schede.py             schede per singola farmacia -> HTML + PDF
+  refresh_data.py             scarica open data e ricalcola lo scoring
 report/
-  pharma_milano_intelligence.html   report autoconsistente (grafici in base64)
-  charts/                     i grafici in PNG
+  pharma_milano_intelligence.{html,pdf}   report territoriale
+  charts/                     grafici in PNG
+  schede/                     schede per farmacia
+.github/workflows/refresh-data.yml   aggiornamento automatico mensile
 ```
 
-## Come rigenerare il report
+## Comandi
 
 ```bash
 pip install -r requirements.txt
-python scripts/build_report.py
+
+python scripts/build_report.py     # report territoriale (HTML + PDF + grafici)
+python scripts/build_schede.py     # schede farmacia (tutte quelle arricchite)
+python scripts/build_schede.py MI2052 MI1440   # solo alcune
+python scripts/refresh_data.py     # aggiorna i dati e ricalcola lo scoring
 ```
 
-Il comando ricrea i grafici in `report/charts/` e riscrive
-`report/pharma_milano_intelligence.html`. Le immagini sono incorporate nel file
-HTML in base64, quindi il report resta visualizzabile anche se spostato da solo.
+Il report incorpora i grafici in base64, quindi l'HTML resta visualizzabile
+anche se spostato da solo. Il PDF richiede `weasyprint`.
+
+## I tre moduli (next step)
+
+**1. Arricchimento schede** (`pharma/enrichment.py`) — orari, servizi, recensioni,
+sito, e-commerce, social per ogni farmacia. Questi dati **non sono negli open
+data**: vanno raccolti da fonti esterne e inseriti in `data/enrichment_farmacie.csv`
+(lo schema e gia pronto, con alcune righe di esempio).
+
+**2. Modulo commercialisti** (`pharma/financials.py`) — incrocia il bilancio
+(`data/financials_farmacie.csv`, da popolare) con il potenziale territoriale del
+NIL e dice se la farmacia rende sopra/sotto le attese della zona, confrontando i
+margini con benchmark di settore. Le zone centrali ad alto flusso non residente
+vengono riconosciute ed escluse dal verdetto secco. I parametri economici sono
+**assunzioni dichiarate** in cima al modulo, da tarare su dati reali.
+
+**3. Aggiornamento automatico** (`scripts/refresh_data.py` + workflow) — ricalcola
+tutto dagli open data. La metodologia di scoring e stata validata: ricostruisce i
+punteggi originali con errore trascurabile (opportunity maxerr 0.34, saturazione
+1.34, archetipi 98.6%). Gli endpoint remoti del portale CKAN vanno confermati alla
+prima esecuzione con rete attiva (vedi note nello script).
 
 ## Le metriche
 
