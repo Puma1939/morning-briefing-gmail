@@ -1,0 +1,49 @@
+name: Refresh Pharma Milano data
+
+# Aggiornamento automatico: ricalcola scoring, report e schede dagli open data.
+# Gira il primo giorno del mese e su richiesta manuale. Committa solo se qualcosa
+# e cambiato. Richiede che gli endpoint remoti in scripts/refresh_data.py siano
+# stati confermati (altrimenti usa il fallback locale e rigenera solo i derivati).
+
+on:
+  schedule:
+    - cron: "0 4 1 * *"   # 04:00 UTC, primo del mese
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          # librerie di sistema per weasyprint (PDF)
+          sudo apt-get update && sudo apt-get install -y libpango-1.0-0 libpangoft2-1.0-0
+
+      - name: Refresh data and rebuild artifacts
+        run: |
+          python scripts/refresh_data.py
+          python scripts/build_report.py
+          python scripts/build_schede.py
+
+      - name: Commit changes if any
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if [ -n "$(git status --porcelain)" ]; then
+            git add -A
+            git commit -m "chore: refresh Pharma Milano data and artifacts [skip ci]"
+            git push
+          else
+            echo "Nessun cambiamento."
+          fi
