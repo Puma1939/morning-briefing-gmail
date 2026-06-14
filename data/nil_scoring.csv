@@ -1,0 +1,70 @@
+id_nil,nil,municipio,farmacie,distanza_mediana_farmacia_m,parafarmacie_attive,nil_pop,residenti_2025,residenti_over65,zona,pop_per_farmacia,farmacie_per_10k,parafarmacie_per_10k,quota_over65_pct,over65_per_farmacia,proximity_pressure,coverage_gap,senior_demand,para_pressure,opportunity_score,saturation_index,archetipo
+36,Scalo Romana,5,1,309.1428330482223,0,Scalo Romana,12030,2185,Scalo Romana (M5),12030,0.83,0.0,18.2,2185,52.2,100.0,100.0,21.7,95.7,23.2,Zona ad alto potenziale non satura
+13,Greco - Segnano,2,2,238.5572898604342,0,Greco - Segnano,16172,3320,Greco - Segnano (M2),8086,1.24,0.0,20.5,1660,79.7,97.1,97.1,21.7,93.3,34.2,Zona ad alto potenziale non satura
+70,Ghisolfa,8,3,296.7098872269166,0,Ghisolfa,18625,3892,Ghisolfa (M8),6208,1.61,0.0,20.9,1297,55.8,89.9,85.5,21.7,86.0,29.1,Zona ad alto potenziale non satura
+46,Barona,6,3,661.7339921364453,0,Barona,16545,5150,Barona (M6),5515,1.81,0.0,31.1,1717,5.8,79.7,98.6,21.7,86.0,16.1,Zona ad alto potenziale non satura
+16,Gorla - Precotto,2,5,521.5887638499968,0,Gorla - Precotto,30058,6465,Gorla - Precotto (M2),6012,1.66,0.0,21.5,1293,10.1,84.1,84.1,21.7,82.9,15.7,Zona ad alto potenziale non satura
+72,Maggiore - Musocco - Certosa,8,1,648.5861663952743,1,Maggiore - Musocco - Certosa,10508,1495,Maggiore - Musocco - Certosa (M8),10508,0.95,0.95,14.2,1495,7.2,98.6,91.3,72.5,81.8,18.3,Zona ad alto potenziale non satura
+83,Bruzzano,9,2,205.2002357812594,1,Bruzzano,12684,3070,Bruzzano (M9),6342,1.58,0.79,24.2,1535,89.9,92.8,94.2,66.7,81.4,49.0,Zona ad alto potenziale non satura
+37,Morivione,5,1,436.165251144973,1,Morivione,7665,1632,Morivione (M5),7665,1.3,1.3,21.3,1632,18.8,95.7,95.7,78.3,80.9,24.8,Zona ad alto potenziale non satura
+61,Quarto Cagnino,7,2,288.3110814815626,0,Quarto Cagnino,9952,2657,Quarto Cagnino (M7),4976,2.01,0.0,26.7,1328,60.9,75.4,88.4,21.7,80.5,37.4,Zona ad alto potenziale non satura
+80,Affori,9,4,312.1763166652606,1,Affori,25973,5047,Affori (M9),6493,1.54,0.39,19.4,1262,47.8,94.2,79.7,53.6,79.6,30.7,Zona ad alto potenziale non satura
+55,Baggio - Q.Re Degli Olmi - Q.Re Valsesia,7,5,431.3968612288433,2,Baggio - Q.re degli Olmi - Q.re Valsesia,30685,7533,Baggio - Q.Re Degli Olmi - Q.Re Valsesia (M7),6137,1.63,0.65,24.5,1507,21.7,88.4,92.8,63.8,79.5,26.2,Zona ad alto potenziale non satura
+62,Quinto Romano,7,1,1344.194449535641,0,Quinto Romano,4795,1316,Quinto Romano (M7),4795,2.09,0.0,27.4,1316,1.4,72.5,87.0,21.7,78.7,18.5,Zona ad alto potenziale non satura
+48,Ronchetto Sul Naviglio - Q.Re Lodovico Il Moro,6,3,517.5023780390626,0,Ronchetto sul Naviglio - Q.re Lodovico il Moro,14554,3829,Ronchetto Sul Naviglio - Q.Re Lodovico Il Moro (M6),4851,2.06,0.0,26.3,1276,11.6,73.9,81.2,21.7,77.3,20.8,Zona ad alto potenziale non satura
+53,Lorenteggio,6,3,363.0608581564837,0,Lorenteggio,15199,3355,Lorenteggio (M6),5066,1.97,0.0,22.1,1118,31.9,76.8,75.4,21.7,76.6,26.3,Zona ad alto potenziale non satura
+17,Adriano,2,3,360.9019024584749,1,Adriano,18203,3165,Adriano (M2),6068,1.65,0.55,17.4,1055,33.3,85.5,73.9,59.4,72.5,30.7,Zona ad alto potenziale non satura
+28,Umbria - Molise - Calvairate,4,4,293.0013596064015,2,Umbria - Molise - Calvairate,23153,5154,Umbria - Molise - Calvairate (M4),5788,1.73,0.86,22.3,1288,59.4,81.2,82.6,69.6,71.5,43.8,Zona ad alto potenziale non satura
+23,Lambrate - Ortica,3,2,499.8425972187783,2,Lambrate - Ortica,12654,2325,Lambrate - Ortica (M3),6327,1.58,1.58,18.4,1162,14.5,91.3,76.8,85.5,70.9,26.4,Zona ad alto potenziale non satura
+33,Rogoredo - Santa Giulia,4,2,484.2269561959689,0,Rogoredo - Santa Giulia,11717,1744,Rogoredo - Santa Giulia (M4),5858,1.71,0.0,14.9,872,15.9,82.6,50.7,21.7,70.6,18.4,Zona ad alto potenziale non satura
+64,Trenno,8,1,871.8620305537559,0,Trenno,4008,1354,Trenno (M8),4008,2.5,0.0,33.8,1354,4.3,52.2,89.9,21.7,70.6,28.0,Zona ad alto potenziale non satura
+35,Lodi - Corvetto,4,8,334.2323165769486,0,Lodi - Corvetto,36911,8122,Lodi - Corvetto (M4),4614,2.17,0.0,22.0,1015,37.7,63.8,69.6,21.7,68.7,34.2,Zona bilanciata
+31,Monlue' - Ponte Lambro,4,1,1176.248503934637,0,Monlue' - Ponte Lambro,6088,756,Monlue' - Ponte Lambro (M4),6088,1.64,0.0,12.4,756,2.9,87.0,37.0,21.7,67.8,11.9,Zona bilanciata
+82,Comasina,9,2,313.6474820859447,0,Comasina,10135,1684,Comasina (M9),5068,1.97,0.0,16.6,842,46.4,78.3,47.8,21.7,67.6,31.3,Zona bilanciata
+56,Forze Armate,7,6,433.6859144796231,0,Forze Armate,25189,6325,Forze Armate (M7),4198,2.38,0.0,25.1,1054,20.3,58.0,72.5,21.7,67.1,31.0,Zona servizi senior
+41,Gratosoglio - Q.Re Missaglia - Q.Re Terrazze,5,4,379.0200429257802,2,Gratosoglio - Q.re Missaglia - Q.re Terrazze,19104,4887,Gratosoglio - Q.Re Missaglia - Q.Re Terrazze (M5),4776,2.09,1.05,25.6,1222,27.5,69.6,78.3,73.9,63.9,38.1,Zona servizi senior
+79,Dergano,9,5,409.2529463746818,0,Dergano,23901,4081,Dergano (M9),4780,2.09,0.0,17.1,816,24.6,71.0,43.5,21.7,62.8,26.6,Zona bilanciata
+19,Padova - Turro - Crescenzago,2,8,280.3334423826894,2,Padova - Turro - Crescenzago,37976,7650,Padova - Turro - Crescenzago (M2),4747,2.11,0.53,20.1,956,62.3,68.1,65.2,58.0,61.9,48.4,Zona bilanciata
+42,Stadera - Chiesa Rossa - Q.Re Torretta - Conca Fallata,5,7,374.4595341126668,0,Stadera - Chiesa Rossa - Q.re Torretta - Conca Fallata,28869,6571,Stadera - Chiesa Rossa - Q.Re Torretta - Conca Fallata (M5),4124,2.42,0.0,22.8,939,29.0,56.5,59.4,21.7,61.9,34.7,Zona bilanciata
+49,Giambellino,6,7,253.7435931988364,1,Giambellino,30596,6736,Giambellino (M6),4371,2.29,0.33,22.0,962,68.1,62.3,66.7,49.3,61.5,51.3,Zona bilanciata
+57,San Siro,7,6,247.4402904134735,0,San Siro,25691,5366,San Siro (M7),4282,2.34,0.0,20.9,894,73.9,59.4,53.6,21.7,61.1,49.1,Zona bilanciata
+38,Vigentino - Q.Re Fatima,5,4,504.493920841665,0,Vigentino - Q.re Fatima,16273,3751,Vigentino - Q.Re Fatima (M5),4068,2.46,0.0,23.1,938,13.0,55.1,58.0,21.7,60.8,29.8,Zona bilanciata
+77,Bovisa,9,3,234.3129193954211,0,Bovisa,13845,2500,Bovisa (M9),4615,2.17,0.0,18.1,833,81.2,65.2,44.9,21.7,60.7,49.4,Zona bilanciata
+81,Bovisasca,9,2,604.7017368584773,0,Bovisasca,7548,1961,Bovisasca (M9),3774,2.65,0.0,26.0,980,8.7,46.4,68.1,21.7,60.4,32.2,Zona bilanciata
+14,Niguarda - Ca' Granda - Prato Centenaro - Q.Re Fulvio Testi,9,9,320.0983858700198,1,Niguarda - Ca’ Granda - Prato Centenaro - Q.re Fulvio Testi,36274,9310,Niguarda - Ca' Granda - Prato Centenaro - Q.Re Fulvio Testi (M9),4030,2.48,0.28,25.7,1034,43.5,53.6,71.0,44.9,60.0,45.7,Zona servizi senior
+71,Villapizzone - Cagnola - Boldinasco,8,9,296.7098872269166,3,Villapizzone - Cagnola - Boldinasco,41808,8571,Villapizzone - Cagnola - Boldinasco (M8),4645,2.15,0.72,20.5,952,55.8,66.7,63.8,65.2,59.3,48.2,Zona bilanciata
+43,Tibaldi,5,3,186.6593261529576,0,Tibaldi,11410,2589,Tibaldi (M5),3803,2.63,0.0,22.7,863,94.2,49.3,49.3,21.7,55.1,60.8,Zona bilanciata
+52,Bande Nere,"6, 7",12,315.0039790972447,1,Bande Nere,44063,10964,"Bande Nere (M6, 7)",3672,2.72,0.23,24.9,914,44.9,43.5,56.5,43.5,50.6,50.5,Zona bilanciata
+65,Q.Re Gallaratese - Q.Re San Leonardo - Lampugnano,8,10,423.7044594989124,1,Q.re Gallaratese - Q.re San Leonardo - Lampugnano,33319,9441,Q.Re Gallaratese - Q.Re San Leonardo - Lampugnano (M8),3332,3.0,0.3,28.3,944,23.2,39.1,60.9,47.1,49.5,45.6,Zona bilanciata
+12,Maciachini - Maggiolina,"2, 9",7,250.7450514906947,1,Maciachini - Maggiolina,26378,6166,"Maciachini - Maggiolina (M2, 9)",3768,2.65,0.38,23.4,881,72.5,44.9,52.2,51.4,48.2,60.4,Zona bilanciata
+25,Corsica,4,5,217.1963247351429,4,Corsica,19716,4738,Corsica (M4),3943,2.54,2.03,24.0,948,85.5,50.7,62.3,94.2,45.8,71.6,Zona molto competitiva
+20,Loreto - Casoretto - Nolo,"2, 3",12,245.1950497667165,0,Loreto - Casoretto - NoLo,42573,7832,"Loreto - Casoretto - Nolo (M2, 3)",3548,2.82,0.0,18.4,653,75.4,40.6,30.4,21.7,44.6,58.1,Zona bilanciata
+50,Porta Genova,6,4,323.3612894832415,2,Porta Genova,15100,3592,Porta Genova (M6),3775,2.65,1.32,23.8,898,42.0,47.8,55.1,81.2,44.6,55.7,Zona pressione parafarmacie
+76,Quarto Oggiaro - Vialba - Musocco,8,9,253.1946314569885,1,Quarto Oggiaro - Vialba - Musocco,32914,6992,Quarto Oggiaro - Vialba - Musocco (M8),3657,2.73,0.3,21.2,777,69.6,42.0,40.6,47.1,43.7,60.5,Zona bilanciata
+60,Stadio - Ippodromi,7,4,309.9068624865757,0,Stadio - Ippodromi,12924,2940,Stadio - Ippodromi (M7),3231,3.1,0.0,22.7,735,50.7,33.3,34.8,21.7,42.8,52.7,Zona bilanciata
+18,Cimiano - Rottole - Q.Re Feltre,3,6,311.5368709814369,1,Cimiano - Rottole - Q.re Feltre,19500,5019,Cimiano - Rottole - Q.Re Feltre (M3),3250,3.08,0.51,25.7,836,49.3,36.2,46.4,55.8,41.4,58.1,Zona bilanciata
+15,Bicocca,9,2,372.1532999115925,2,Bicocca,8699,1513,Bicocca (M9),4350,2.3,2.3,17.4,756,30.4,60.9,37.0,98.6,40.6,48.6,Zona pressione parafarmacie
+30,Taliedo - Morsenchio - Q.Re Forlanini,4,6,276.2792994442235,1,Taliedo - Morsenchio - Q.re Forlanini,19619,4653,Taliedo - Morsenchio - Q.Re Forlanini (M4),3270,3.06,0.51,23.7,776,63.8,37.7,39.1,55.8,39.5,62.2,Zona bilanciata
+45,Moncucco - San Cristoforo,6,5,448.659864031299,0,Moncucco - San Cristoforo,13626,2959,Moncucco - San Cristoforo (M6),2725,3.67,0.0,21.7,592,17.4,27.5,27.5,21.7,37.7,43.7,Zona bilanciata
+22,Citta' Studi,3,11,252.0105104208244,3,Citta' studi,35725,8653,Citta' Studi (M3),3248,3.08,0.84,24.2,787,71.0,34.8,42.0,68.1,36.7,68.1,Zona bilanciata
+51,Porta Magenta,"6, 7",9,243.8266576107816,1,Porta Magenta,26664,6500,"Porta Magenta (M6, 7)",2963,3.38,0.38,24.4,722,76.8,30.4,33.3,51.4,35.1,69.1,Zona bilanciata
+58,De Angeli - Monte Rosa,"7, 8",9,301.8650892548174,0,De Angeli - Monte Rosa,21544,5170,"De Angeli - Monte Rosa (M7, 8)",2394,4.18,0.0,24.0,574,53.6,23.2,24.6,21.7,34.7,58.3,Zona bilanciata
+63,Figino,7,1,2173.502581146967,0,Figino,2592,521,Figino (M7),2592,3.86,0.0,20.1,521,0.0,24.6,17.4,21.7,32.8,38.9,Zona bilanciata
+68,Pagano,"1, 7, 8",6,293.4419855513724,1,Pagano,17651,4212,"Pagano (M1, 7, 8)",2942,3.4,0.57,23.9,702,58.0,29.0,31.9,60.9,32.0,65.1,Zona bilanciata
+11,Isola,"2, 9",7,323.662862417665,2,Isola,22155,4532,"Isola (M2, 9)",3165,3.16,0.9,20.5,647,40.6,31.9,29.0,71.0,30.3,59.7,Zona pressione parafarmacie
+66,Qt 8,8,2,387.3050186775361,0,QT 8,3977,1059,Qt 8 (M8),1988,5.03,0.0,26.6,530,26.1,10.1,18.8,21.7,26.8,54.6,Zona bilanciata
+27,Pta Romana,"4, 5",6,224.7442477953547,2,Pta Romana,16151,3542,"Pta Romana (M4, 5)",2692,3.71,1.24,21.9,590,84.1,26.1,26.1,75.4,25.8,78.4,Zona molto competitiva
+29,Ortomercato,4,2,358.6200726614717,0,Ortomercato,4091,762,Ortomercato (M4),2046,4.89,0.0,18.6,381,34.8,13.0,7.2,21.7,24.0,56.3,Zona bilanciata
+26,Xxii Marzo,4,14,261.874874245665,2,XXII Marzo,31183,7539,Xxii Marzo (M4),2227,4.49,0.64,24.2,538,66.7,18.8,21.7,62.3,23.6,73.0,Zona molto competitiva
+21,Buenos Aires - Porta Venezia - Porta Monforte,3,28,192.1184518225379,8,Buenos Aires - Porta Venezia - Porta Monforte,61964,14441,Buenos Aires - Porta Venezia - Porta Monforte (M3),2213,4.52,1.29,23.3,516,92.8,17.4,15.9,76.8,18.0,85.7,Zona molto competitiva
+67,Portello,8,4,327.5436448524797,2,Portello,8997,2139,Portello (M8),2249,4.45,2.22,23.8,535,39.1,20.3,20.3,96.4,17.0,69.5,Zona pressione parafarmacie
+4,Guastalla,1,7,241.259819725735,3,Guastalla,15383,3854,Guastalla (M1),2198,4.55,1.95,25.1,551,78.3,15.9,23.2,92.8,16.7,84.4,Zona molto competitiva
+44,Porta Ticinese - Conchetta,6,7,167.3272543547782,3,Porta Ticinese - Conchetta,16478,3334,Porta Ticinese - Conchetta (M6),2354,4.25,1.82,20.2,476,98.6,21.7,14.5,91.3,16.6,88.6,Zona molto competitiva
+69,Sarpi,"1, 8",14,172.4457967646908,4,Sarpi,30474,6272,"Sarpi (M1, 8)",2177,4.59,1.31,20.6,448,95.7,14.5,11.6,79.7,14.6,88.6,Zona molto competitiva
+6,Porta Ticinese - Conca Del Naviglio,"1, 5",10,205.9617729150854,3,Porta Ticinese - Conca del Naviglio,20100,4404,"Porta Ticinese - Conca Del Naviglio (M1, 5)",2010,4.98,1.49,21.9,440,88.4,11.6,10.1,84.1,11.9,88.2,Zona molto competitiva
+5,Porta Vigentina - Porta Lodovica,"1, 5",7,261.8894075733478,2,Porta Vigentina - Porta Lodovica,13542,3212,"Porta Vigentina - Porta Lodovica (M1, 5)",1935,5.17,1.48,23.7,459,65.2,8.7,13.0,82.6,11.9,81.1,Zona molto competitiva
+7,Magenta - S. Vittore,1,10,210.8322682427436,4,Magenta - S.Vittore,18049,4033,Magenta - S. Vittore (M1),1805,5.54,2.22,22.3,403,87.0,7.2,8.7,96.4,7.0,92.1,Zona molto competitiva
+10,Stazione Centrale - Ponte Seveso,2,10,232.6799263486213,3,Stazione Centrale - Ponte Seveso,17172,3732,Stazione Centrale - Ponte Seveso (M2),1717,5.82,1.75,21.7,373,82.6,5.8,5.8,89.9,6.7,90.0,Zona molto competitiva
+2,Brera,1,14,197.0994002708614,3,Brera,18110,4397,Brera (M1),1294,7.73,1.66,24.3,314,91.3,4.3,4.3,87.0,6.0,93.1,Zona molto competitiva
+9,Porta Garibaldi - Porta Nuova,9,5,339.4533314619896,1,Porta Garibaldi - Porta Nuova,5746,1283,Porta Garibaldi - Porta Nuova (M9),1149,8.7,1.74,22.3,257,36.2,2.9,2.9,88.4,4.6,74.7,Zona molto competitiva
+1,Duomo,1,25,171.9512017219984,10,Duomo,15892,3816,Duomo (M1),636,15.73,6.29,24.0,153,97.1,1.4,1.4,100.0,1.1,99.0,Zona molto competitiva
