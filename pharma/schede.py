@@ -198,6 +198,53 @@ def build_scheda(
 </main></body></html>"""
 
 
+def build_index(farmacie_scored: pd.DataFrame, codici: list[str], out_dir: Path) -> Path:
+    """Pagina indice con ricerca client-side che linka tutte le schede generate."""
+    fs = farmacie_scored.copy()
+    fs["CODICE_FARMACIA"] = fs["CODICE_FARMACIA"].astype(str)
+    sub = fs[fs["CODICE_FARMACIA"].isin(codici)].sort_values("opportunity_score", ascending=False)
+    rows = "\n".join(
+        f'<tr><td><a href="scheda_{r.CODICE_FARMACIA}.html">{r.CODICE_FARMACIA}</a></td>'
+        f"<td>{r.DESCRIZIONE_FARMACIA}</td><td>{r.NIL}</td>"
+        f"<td>{r.archetipo}</td><td>{r.opportunity_score:.1f}</td>"
+        f"<td>{r.saturation_index:.1f}</td></tr>"
+        for r in sub.itertuples()
+    )
+    html = f"""<!doctype html><html lang="it"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Schede farmacie - indice</title>
+<style>
+  body {{ font-family:Inter,Aptos,'Segoe UI',Arial,sans-serif; color:{INK}; margin:0; background:#FCFCFD; }}
+  main {{ max-width:1000px; margin:0 auto; padding:40px 24px; }}
+  h1 {{ font-size:26px; margin:0 0 6px; }}
+  p {{ color:{MUTED}; }}
+  input {{ width:100%; padding:10px 12px; font-size:15px; border:1px solid {GRID}; border-radius:8px; margin:14px 0; }}
+  table {{ width:100%; border-collapse:collapse; background:#fff; border:1px solid {GRID}; }}
+  th,td {{ padding:9px 11px; border-bottom:1px solid {GRID}; text-align:left; font-size:13.5px; }}
+  th {{ background:#F4F5F7; color:#464C55; }}
+  a {{ color:{BLUE}; text-decoration:none; }}
+</style></head><body><main>
+  <h1>Schede farmacie - Milano</h1>
+  <p>{len(sub)} schede. Filtra per nome, NIL o archetipo.</p>
+  <input id="q" placeholder="Cerca..." onkeyup="filtra()">
+  <table id="t">
+    <thead><tr><th>Codice</th><th>Farmacia</th><th>NIL</th><th>Archetipo</th><th>Opportunity</th><th>Saturazione</th></tr></thead>
+    <tbody>{rows}</tbody>
+  </table>
+  <script>
+    function filtra() {{
+      var q = document.getElementById('q').value.toLowerCase();
+      document.querySelectorAll('#t tbody tr').forEach(function(tr) {{
+        tr.style.display = tr.textContent.toLowerCase().indexOf(q) > -1 ? '' : 'none';
+      }});
+    }}
+  </script>
+</main></body></html>"""
+    path = out_dir / "index.html"
+    path.write_text(html, encoding="utf-8")
+    return path
+
+
 def build_all(
     farmacie_scored: pd.DataFrame,
     enrichment: pd.DataFrame,
