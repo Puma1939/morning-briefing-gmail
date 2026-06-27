@@ -1,3 +1,70 @@
+# Morning Briefing
+
+Raccolta di indicatori autoaggiornanti. Due tracce indipendenti:
+
+1. **Pharma Milano Intelligence** — osservatorio territoriale su farmacie e
+   parafarmacie del Comune di Milano (sotto).
+2. **Citrini Doomsday Scenario** — termometro macro settimanale + basket
+   long/short sulla tesi "AI Doomsday" di Citrini Research
+   ([dettagli](#citrini-doomsday-scenario)).
+
+---
+
+## Citrini Doomsday Scenario
+
+Termometro **0–100** che misura quanto i mercati stiano già prezzando la tesi
+"AI Doomsday / 2028 Global Intelligence Crisis" di Citrini Research (feb 2026):
+AI → sostituzione del lavoro → disoccupazione → crollo dei consumi → stress sul
+credito privato → recessione e drawdown azionario da GFC. Accanto al punteggio,
+un **basket long/short** (long sui rifugi, short sui settori vulnerabili) mostra
+se il "Doomsday trade" sta pagando.
+
+```
+doomsday/
+  config.py     assunzioni dichiarate: serie FRED, ticker del basket, pesi, soglie
+  data.py       fetch da fonti gratuite senza API key (FRED CSV + Stooq)
+  indicator.py  termometro composito 0-100 + performance del basket
+  report.py     report HTML autoconsistente (grafici in base64)
+scripts/build_doomsday.py     pipeline settimanale (fetch -> calcolo -> storico -> HTML)
+data/doomsday_history.csv      storico settimanale del punteggio (popolato dalle run)
+report/citrini_doomsday.html   report (generato)
+.github/workflows/doomsday-weekly.yml   aggiornamento automatico settimanale + email
+```
+
+### Comandi
+
+```bash
+pip install -r requirements.txt
+python scripts/build_doomsday.py          # fetch reale (serve rete: in CI ok)
+python scripts/build_doomsday.py --demo   # dati sintetici, nessuna rete (per provarlo)
+```
+
+Il termometro è la **media pesata** di sei componenti, ognuna mappata su 0–100
+(100 = massimo stress): deterioramento del lavoro (jobless claims), stress sul
+credito (HY OAS), drawdown dell'S&P 500, volatilità (VIX), segnale di recessione
+(curva 10y-2y) e debolezza dei consumi (XLY/XLP). Proxy, pesi e soglie sono
+**scelte dichiarate** in `doomsday/config.py`, da ritarare a piacere.
+
+### Email settimanale
+
+Il workflow gira ogni lunedì (e su `workflow_dispatch`), storicizza il valore e
+invia il report via email. Per abilitare l'invio, crea una **App password**
+Google e imposta nei *repository secrets*:
+
+| Secret | Valore |
+|---|---|
+| `MAIL_USERNAME` | il tuo indirizzo Gmail (mittente) |
+| `MAIL_PASSWORD` | App password Google (16 caratteri) |
+| `MAIL_TO` | destinatario del briefing |
+
+Senza i secret il workflow funziona comunque: calcola e committa lo storico,
+saltando solo l'invio.
+
+> ⚠️ Indicatore prototipale a scopo informativo, **non** una raccomandazione di
+> investimento.
+
+---
+
 # Pharma Milano Intelligence
 
 Osservatorio territoriale su **farmacie e parafarmacie del Comune di Milano**.
