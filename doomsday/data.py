@@ -33,6 +33,9 @@ FRED_API = (
 )
 FRED_CSV = "https://fred.stlouisfed.org/graph/fredgraph.csv?id={sid}"
 STOOQ_CSV = "https://stooq.com/q/d/l/?s={ticker}&i=d"
+# Yahoo Finance come fallback ai prezzi: Stooq dai runner CI a volte risponde con
+# una pagina HTML (rate-limit/robots) invece del CSV. Yahoo non richiede API key.
+YAHOO_CHART = "https://query1.finance.yahoo.com/v8/finance/chart/{sym}?interval=1d&range=2y"
 
 _UA = "Mozilla/5.0 (compatible; citrini-doomsday/1.0)"
 
@@ -111,25 +114,74 @@ def fred_series(sid: str, cache_dir: Path | None = None) -> pd.Series:
     return s.dropna().sort_index()
 
 
+def _stooq_to_yahoo(ticker: str) -> str:
+    """Converte un ticker Stooq nel simbolo Yahoo corrispondente.
+
+    "^spx" -> "^GSPC", "^vix" -> "^VIX", "gld.us" -> "GLD", "xly.us" -> "XLY".
+    """
+    t = ticker.lower()
+    special = {"^spx": "^GSPC", "^vix": "^VIX", "^ndx": "^NDX", "^dji": "^DJI"}
+    if t in special:
+        return special[t]
+    if t.endswith(".us"):
+        return ticker[:-3].upper()
+    return ticker.upper()
+
+
+def _yahoo_prices(ticker: str) -> pd.Series:
+    """Chiusure giornaliere da Yahoo Finance come Series indicizzata per data."""
+    sym = _stooq_to_yahoo(ticker)
+    raw = _get(YAHOO_CHART.format(sym=urllib.parse.quote(sym)))
+    result = json.loads(raw)["chart"]["result"][0]
+    ts = result.get("timestamp") or []
+    closes = result["indicators"]["quote"][0].get("close") or []
+    s = pd.Series(closes, index=pd.to_datetime(ts, unit="s").normalize())
+    s = pd.to_numeric(s, errors="coerce").dropna().sort_index()
+    if s.empty:
+        raise ValueError(f"Yahoo: nessun dato per '{sym}'")
+    return s
+
+
 def stooq_prices(ticker: str, cache_dir: Path | None = None) -> pd.Series:
-    """Prezzo di chiusura giornaliero (Close) come Series indicizzata per data."""
+    """Chiusura giornaliera come Series indicizzata per data.
+
+    Sorgenti in ordine: (1) Stooq CSV; (2) Yahoo Finance se Stooq fallisce o
+    risponde con una pagina non valida (HTML/rate-limit); (3) cache locale.
+    """
     cp = _cache_path(cache_dir, f"stooq_{ticker.replace('^', '_').replace('.', '_')}")
+
+    # (1) Stooq
     try:
         text = _get(STOOQ_CSV.format(ticker=ticker))
-        if cp is not None and "Date,Open" in text:
-            cp.write_text(text, encoding="utf-8")
+        if "Date,Open" in text:
+            if cp is not None:
+                cp.write_text(text, encoding="utf-8")
+            df = pd.read_csv(io.StringIO(text))
+            df["Date"] = pd.to_datetime(df["Date"], errors="coerce")
+            s = pd.to_numeric(df["Close"], errors="coerce")
+            s.index = df["Date"]
+            return s.dropna().sort_index()
     except Exception:
-        if cp is not None and cp.exists():
-            text = cp.read_text(encoding="utf-8")
-        else:
-            raise
-    if "Date,Open" not in text:  # Stooq risponde "N/A" su ticker sconosciuti/limiti
-        raise ValueError(f"Stooq: risposta non valida per '{ticker}': {text[:80]!r}")
-    df = pd.read_csv(io.StringIO(text))
-    df["Date"] = pd.to_datetime(df["Date"], errors="coerce")
-    s = pd.to_numeric(df["Close"], errors="coerce")
-    s.index = df["Date"]
-    return s.dropna().sort_index()
+        pass
+
+    # (2) Yahoo Finance
+    try:
+        s = _yahoo_prices(ticker)
+        if cp is not None:
+            cp.write_text("Date,Close\n" + "\n".join(f"{d:%Y-%m-%d},{v}" for d, v in s.items()) + "\n", encoding="utf-8")
+        return s
+    except Exception:
+        pass
+
+    # (3) cache locale
+    if cp is not None and cp.exists():
+        df = pd.read_csv(io.StringIO(cp.read_text(encoding="utf-8")))
+        close_col = "Close" if "Close" in df.columns else df.columns[-1]
+        df["Date"] = pd.to_datetime(df["Date"], errors="coerce")
+        s = pd.to_numeric(df[close_col], errors="coerce")
+        s.index = df["Date"]
+        return s.dropna().sort_index()
+    raise ValueError(f"impossibile scaricare i prezzi per '{ticker}' (Stooq/Yahoo falliti, nessuna cache)")
 
 
 def fetch_one(source: tuple, cache_dir: Path | None = None) -> pd.Series:
