@@ -76,6 +76,7 @@ class Snapshot:
     long_legs: list[BasketLeg] = field(default_factory=list)
     short_legs: list[BasketLeg] = field(default_factory=list)
     spread: dict = field(default_factory=dict)  # orizzonte -> spread % (long - short)
+    skipped: list = field(default_factory=list)  # (label, motivo) delle serie non scaricate
 
     def history_row(self) -> dict:
         row = {"date": self.asof, "composite": self.composite, "regime": self.regime}
@@ -118,41 +119,55 @@ def build_snapshot(cache_dir: Path | None = None, raw: dict | None = None) -> Sn
             return raw[ticker]
         return stooq_prices(ticker, cache_dir)
 
-    # --- componenti ---
+    # --- componenti (degradazione elegante: una fonte che non risponde viene
+    #     saltata e i pesi ricalcolati sui restanti, cosi il report esce comunque) ---
     components: list[Component] = []
+    skipped: list = []
     asof_dates = []
     for comp in config.COMPONENTS:
-        series = get_component_series(comp)
-        sub, obs = _subscore(comp, series)
+        try:
+            series = get_component_series(comp)
+            sub, obs = _subscore(comp, series)
+        except Exception as err:  # noqa: BLE001
+            skipped.append((comp["label"], str(err)[:120]))
+            continue
         components.append(
             Component(comp["key"], comp["label"], comp["desc"], comp["weight"], sub, obs)
         )
         asof_dates.append(series.index[-1])
 
-    composite = round(sum(c.subscore * c.weight for c in components), 1)
+    if not components:
+        raise RuntimeError("nessuna componente scaricabile: tutte le fonti non hanno risposto")
+
+    # pesi normalizzati sulle sole componenti disponibili
+    wsum = sum(c.weight for c in components)
+    composite = round(sum(c.subscore * c.weight for c in components) / wsum, 1)
     regime, color = config.regime_for(composite)
     asof = max(asof_dates).strftime("%Y-%m-%d")
 
-    # --- basket ---
+    # --- basket (i singoli strumenti che non rispondono vengono saltati) ---
     long_legs, short_legs = [], []
     long_ret_by_h: dict = {h: [] for h in config.HORIZONS}
     short_ret_by_h: dict = {h: [] for h in config.HORIZONS}
 
-    for ticker, (stooq_t, name) in config.BASKET_LONG.items():
-        r = _returns(get_prices(stooq_t))
-        long_legs.append(BasketLeg(ticker, name, r))
-        for h, v in r.items():
-            long_ret_by_h[h].append(v)
-    for ticker, (stooq_t, name) in config.BASKET_SHORT.items():
-        r = _returns(get_prices(stooq_t))
-        short_legs.append(BasketLeg(ticker, name, r))
-        for h, v in r.items():
-            short_ret_by_h[h].append(v)
+    def add_legs(mapping: dict, legs: list, ret_by_h: dict) -> None:
+        for ticker, (stooq_t, name) in mapping.items():
+            try:
+                r = _returns(get_prices(stooq_t))
+            except Exception as err:  # noqa: BLE001
+                skipped.append((f"{ticker} ({name})", str(err)[:120]))
+                continue
+            legs.append(BasketLeg(ticker, name, r))
+            for h, v in r.items():
+                ret_by_h[h].append(v)
+
+    add_legs(config.BASKET_LONG, long_legs, long_ret_by_h)
+    add_legs(config.BASKET_SHORT, short_legs, short_ret_by_h)
 
     spread = {}
     for h in config.HORIZONS:
-        lmean = sum(long_ret_by_h[h]) / len(long_ret_by_h[h])
-        smean = sum(short_ret_by_h[h]) / len(short_ret_by_h[h])
+        lmean = sum(long_ret_by_h[h]) / len(long_ret_by_h[h]) if long_ret_by_h[h] else 0.0
+        smean = sum(short_ret_by_h[h]) / len(short_ret_by_h[h]) if short_ret_by_h[h] else 0.0
         spread[h] = round(lmean - smean, 2)
 
     return Snapshot(
@@ -164,4 +179,5 @@ def build_snapshot(cache_dir: Path | None = None, raw: dict | None = None) -> Sn
         long_legs=long_legs,
         short_legs=short_legs,
         spread=spread,
+        skipped=skipped,
     )

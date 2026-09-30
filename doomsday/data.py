@@ -13,6 +13,7 @@ locali cosi la pipeline resta riproducibile offline.
 from __future__ import annotations
 
 import io
+import time
 import urllib.request
 from pathlib import Path
 
@@ -24,10 +25,20 @@ STOOQ_CSV = "https://stooq.com/q/d/l/?s={ticker}&i=d"
 _UA = "Mozilla/5.0 (compatible; citrini-doomsday/1.0)"
 
 
-def _get(url: str, timeout: int = 30) -> str:
-    req = urllib.request.Request(url, headers={"User-Agent": _UA})
-    with urllib.request.urlopen(req, timeout=timeout) as resp:
-        return resp.read().decode("utf-8", errors="replace")
+def _get(url: str, timeout: int = 60, retries: int = 4) -> str:
+    """GET con retry ed exponential backoff: assorbe i rallentamenti/timeout
+    intermittenti di FRED e Stooq dai runner CI."""
+    last_err: Exception | None = None
+    for attempt in range(retries):
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": _UA})
+            with urllib.request.urlopen(req, timeout=timeout) as resp:
+                return resp.read().decode("utf-8", errors="replace")
+        except Exception as err:  # noqa: BLE001 - qualsiasi errore di rete e ritentabile
+            last_err = err
+            if attempt < retries - 1:
+                time.sleep(2 ** attempt)  # 1s, 2s, 4s
+    raise last_err  # type: ignore[misc]
 
 
 def _cache_path(cache_dir: Path | None, name: str) -> Path | None:

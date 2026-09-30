@@ -165,6 +165,16 @@ def build_html(snap: Snapshot, history: pd.DataFrame | None = None) -> str:
         arrow = "▲" if d > 0 else ("▼" if d < 0 else "▬")
         delta = f'<span class="delta">{arrow} {d:+.1f} vs settimana prec.</span>'
 
+    skipped_block = ""
+    if snap.skipped:
+        items = "".join(f"<li>{label}</li>" for label, _err in snap.skipped)
+        skipped_block = (
+            '<p class="note" style="background:#FFF6F0;border:1px solid #F0D8C8;'
+            'border-radius:8px;padding:12px 14px;">⚠️ Alcune fonti non hanno risposto e '
+            'sono state escluse da questo aggiornamento (i pesi sono stati ricalcolati sui '
+            f'restanti):<ul style="margin:6px 0 0">{items}</ul></p>'
+        )
+
     return f"""<!doctype html>
 <html lang="it">
 <head>
@@ -205,6 +215,8 @@ def build_html(snap: Snapshot, history: pd.DataFrame | None = None) -> str:
     <img src="{_gauge(snap)}" alt="Termometro composito">
     <div>{delta}</div>
   </section>
+
+  {skipped_block}
 
   <section class="metrics">
     {''.join(f'<div class="metric"><strong>{snap.spread[h]:+.1f}%</strong><span>Basket {h}</span></div>' for h in horizons)}
