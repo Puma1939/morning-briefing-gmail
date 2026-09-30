@@ -30,6 +30,12 @@ jobs:
           pip install "pandas>=2.0" "matplotlib>=3.7" numpy
 
       - name: Build indicator and report
+        env:
+          # API key gratuita FRED (https://fredaccount.stlouisfed.org/apikeys):
+          # se impostata come repository secret, il fetch usa la API ufficiale
+          # (api.stlouisfed.org) invece del server dei grafici, che stalla dai
+          # runner CI. Senza secret ricade sull'endpoint CSV pubblico.
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
         run: python scripts/build_doomsday.py
 
       - name: Read summary line

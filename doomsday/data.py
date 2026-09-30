@@ -13,13 +13,24 @@ locali cosi la pipeline resta riproducibile offline.
 from __future__ import annotations
 
 import io
+import json
+import os
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 from pathlib import Path
 
 import pandas as pd
 
+# La API ufficiale FRED (api.stlouisfed.org) e un servizio distinto dal server
+# dei grafici (fred.stlouisfed.org): quest'ultimo tende a stallare dagli IP dei
+# runner CI. Se e presente una API key (env FRED_API_KEY) la usiamo come sorgente
+# primaria; altrimenti si ripiega sull'endpoint CSV pubblico dei grafici.
+FRED_API = (
+    "https://api.stlouisfed.org/fred/series/observations"
+    "?series_id={sid}&api_key={key}&file_type=json"
+)
 FRED_CSV = "https://fred.stlouisfed.org/graph/fredgraph.csv?id={sid}"
 STOOQ_CSV = "https://stooq.com/q/d/l/?s={ticker}&i=d"
 
@@ -54,20 +65,44 @@ def _cache_path(cache_dir: Path | None, name: str) -> Path | None:
     return cache_dir / f"{name}.csv"
 
 
+def _fred_api_csv(sid: str) -> str:
+    """Scarica la serie dalla API ufficiale FRED e la restituisce in formato
+    CSV "DATE,<sid>" (stesso formato del server dei grafici), cosi il resto
+    del codice e la cache restano invariati. Richiede env FRED_API_KEY."""
+    key = os.environ.get("FRED_API_KEY", "").strip()
+    if not key:
+        raise RuntimeError("FRED_API_KEY non impostata")
+    raw = _get(FRED_API.format(sid=urllib.parse.quote(sid), key=urllib.parse.quote(key)))
+    obs = json.loads(raw).get("observations", [])
+    lines = [f"DATE,{sid}"]
+    for o in obs:
+        lines.append(f"{o.get('date', '')},{o.get('value', '.')}")
+    return "\n".join(lines) + "\n"
+
+
 def fred_series(sid: str, cache_dir: Path | None = None) -> pd.Series:
-    """Serie FRED come Series(float) indicizzata per data."""
+    """Serie FRED come Series(float) indicizzata per data.
+
+    Ordine delle sorgenti: (1) API ufficiale FRED se FRED_API_KEY e presente,
+    (2) endpoint CSV pubblico dei grafici, (3) cache locale se disponibile.
+    """
     cp = _cache_path(cache_dir, f"fred_{sid}")
-    try:
-        text = _get(FRED_CSV.format(sid=sid))
+    text = None
+    for fetch in (_fred_api_csv, lambda s=sid: _get(FRED_CSV.format(sid=s))):
+        try:
+            text = fetch(sid) if fetch is _fred_api_csv else fetch()
+            break
+        except Exception:
+            continue
+    if text is not None:
         if cp is not None:
             cp.write_text(text, encoding="utf-8")
-    except Exception:
-        if cp is not None and cp.exists():
-            text = cp.read_text(encoding="utf-8")
-        else:
-            raise
+    elif cp is not None and cp.exists():
+        text = cp.read_text(encoding="utf-8")
+    else:
+        raise RuntimeError(f"impossibile scaricare la serie FRED '{sid}' (API/CSV falliti, nessuna cache)")
     df = pd.read_csv(io.StringIO(text))
-    # fredgraph usa "DATE" + colonna omonima alla serie; i missing sono "."
+    # formato "DATE" + colonna omonima alla serie; i missing sono "."
     date_col = df.columns[0]
     val_col = df.columns[1]
     df[date_col] = pd.to_datetime(df[date_col], errors="coerce")
