@@ -1,0 +1,67 @@
+name: Citrini Doomsday weekly
+
+# Indicatore settimanale: scarica i dati (FRED + Stooq), ricalcola il termometro
+# e il basket, storicizza, genera il report HTML e lo invia via email.
+# Gira ogni lunedi mattina e su richiesta manuale (workflow_dispatch).
+
+on:
+  schedule:
+    - cron: "0 7 * * 1"   # 07:00 UTC, ogni lunedi
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  doomsday:
+    runs-on: ubuntu-latest
+    env:
+      MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install "pandas>=2.0" "matplotlib>=3.7" numpy
+
+      - name: Build indicator and report
+        run: python scripts/build_doomsday.py
+
+      - name: Read summary line
+        id: summary
+        run: echo "line=$(cat report/citrini_doomsday_summary.txt)" >> "$GITHUB_OUTPUT"
+
+      - name: Send email
+        # Invio solo se i segreti SMTP sono configurati: in assenza, il workflow
+        # storicizza comunque i dati. Crea una "App password" Google e imposta i
+        # repository secrets MAIL_USERNAME, MAIL_PASSWORD e (opz.) MAIL_TO.
+        if: ${{ env.MAIL_USERNAME != '' }}
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: ${{ steps.summary.outputs.line }}
+          to: ${{ secrets.MAIL_TO }}
+          from: Citrini Doomsday <${{ secrets.MAIL_USERNAME }}>
+          html_body: file://report/citrini_doomsday.html
+          attachments: report/citrini_doomsday.html
+
+      - name: Commit updated data and report
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/doomsday_history.csv report/citrini_doomsday.html report/citrini_doomsday_summary.txt
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: weekly Citrini Doomsday update [skip ci]"
+            git push
+          else
+            echo "Nessun cambiamento."
+          fi
