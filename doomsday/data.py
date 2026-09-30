@@ -13,6 +13,8 @@ locali cosi la pipeline resta riproducibile offline.
 from __future__ import annotations
 
 import io
+import time
+import urllib.error
 import urllib.request
 from pathlib import Path
 
@@ -23,11 +25,26 @@ STOOQ_CSV = "https://stooq.com/q/d/l/?s={ticker}&i=d"
 
 _UA = "Mozilla/5.0 (compatible; citrini-doomsday/1.0)"
 
+# Le fonti gratuite (FRED/Stooq) possono rispondere lentamente o resettare la
+# connessione, soprattutto dagli IP di CI. Un timeout piu ampio e qualche
+# tentativo con backoff rendono il fetch robusto a intoppi temporanei.
+_TIMEOUT = 60
+_RETRIES = 4
+_BACKOFF = 3.0
 
-def _get(url: str, timeout: int = 30) -> str:
+
+def _get(url: str, timeout: int = _TIMEOUT, retries: int = _RETRIES) -> str:
     req = urllib.request.Request(url, headers={"User-Agent": _UA})
-    with urllib.request.urlopen(req, timeout=timeout) as resp:
-        return resp.read().decode("utf-8", errors="replace")
+    last_exc: Exception | None = None
+    for attempt in range(retries):
+        try:
+            with urllib.request.urlopen(req, timeout=timeout) as resp:
+                return resp.read().decode("utf-8", errors="replace")
+        except (urllib.error.URLError, TimeoutError, OSError) as exc:
+            last_exc = exc
+            if attempt < retries - 1:
+                time.sleep(_BACKOFF * (2 ** attempt))
+    raise last_exc  # type: ignore[misc]
 
 
 def _cache_path(cache_dir: Path | None, name: str) -> Path | None:
