@@ -60,6 +60,8 @@ def _demo_raw() -> dict:
     # basket: una serie sintetica per ogni ticker (long e short)
     for _t, (stooq_t, _name) in {**config.BASKET_LONG, **config.BASKET_SHORT}.items():
         raw[stooq_t] = walk(100, rng.normal(0, 0.0004), 0.01, days)
+    # 7o componente: valore sintetico 0-100 per il layer narrativa AI-crisis
+    raw["sentiment"] = 62.0
     return raw
 
 

@@ -13,6 +13,7 @@ import pandas as pd
 
 from . import config
 from .data import fetch_one, stooq_prices
+from .sentiment import load_sentiment
 
 
 def _clip01(x: float) -> float:
@@ -76,6 +77,7 @@ class Snapshot:
     long_legs: list[BasketLeg] = field(default_factory=list)
     short_legs: list[BasketLeg] = field(default_factory=list)
     spread: dict = field(default_factory=dict)  # orizzonte -> spread % (long - short)
+    sentiment: dict | None = None  # dettaglio del layer Bigdata.com (temi + evidenze), se presente
 
     def history_row(self) -> dict:
         row = {"date": self.asof, "composite": self.composite, "regime": self.regime}
@@ -104,9 +106,21 @@ def _returns(prices: pd.Series) -> dict:
     return out
 
 
-def build_snapshot(cache_dir: Path | None = None, raw: dict | None = None) -> Snapshot:
+def build_snapshot(
+    cache_dir: Path | None = None,
+    raw: dict | None = None,
+    sentiment_path: Path | str | None = None,
+    include_sentiment: bool = True,
+) -> Snapshot:
     """Costruisce lo snapshot. Se `raw` e fornito (dict di Series), usa quello e
-    salta la rete: utile per test/demo. Altrimenti scarica tutto via data.py."""
+    salta la rete: utile per test/demo. Altrimenti scarica tutto via data.py.
+
+    Il 7o componente "narrativa AI-crisis" (Bigdata.com) viene aggiunto se
+    `include_sentiment` e True e il file `sentiment_path` (default
+    `config.SENTIMENT_FILE`) esiste ed e recente; in demo/test puo essere passato
+    come numero 0-100 in `raw["sentiment"]`. Il composito e la media pesata
+    rinormalizzata sui componenti effettivamente presenti, cosi l'assenza di una
+    fonte (sentiment o una serie) non sballa la scala."""
 
     def get_component_series(comp: dict) -> pd.Series:
         if raw is not None and comp["key"] in raw:
@@ -129,7 +143,25 @@ def build_snapshot(cache_dir: Path | None = None, raw: dict | None = None) -> Sn
         )
         asof_dates.append(series.index[-1])
 
-    composite = round(sum(c.subscore * c.weight for c in components), 1)
+    # --- 7o componente: narrativa AI-crisis (Bigdata.com) ---
+    sentiment_detail: dict | None = None
+    sc = config.SENTIMENT
+    if raw is not None and "sentiment" in raw:
+        val = float(raw["sentiment"])
+        components.append(Component(sc["key"], sc["label"], sc["desc"], sc["weight"], val, val))
+    elif include_sentiment:
+        loaded = load_sentiment(
+            sentiment_path or config.SENTIMENT_FILE, max_age_days=sc["max_age_days"]
+        )
+        if loaded is not None:
+            val = loaded["subscore"]
+            components.append(Component(sc["key"], sc["label"], sc["desc"], sc["weight"], val, val))
+            sentiment_detail = loaded
+
+    # media pesata rinormalizzata sui componenti presenti (se tutti e 6 di mercato
+    # ci sono e senza sentiment, i pesi sommano a 1.0 -> identico a prima)
+    tot_w = sum(c.weight for c in components)
+    composite = round(sum(c.subscore * c.weight for c in components) / tot_w, 1) if tot_w else 0.0
     regime, color = config.regime_for(composite)
     asof = max(asof_dates).strftime("%Y-%m-%d")
 
@@ -164,4 +196,5 @@ def build_snapshot(cache_dir: Path | None = None, raw: dict | None = None) -> Sn
         long_legs=long_legs,
         short_legs=short_legs,
         spread=spread,
+        sentiment=sentiment_detail,
     )
