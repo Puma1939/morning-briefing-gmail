@@ -26,6 +26,8 @@ ACCENT = "#2F6FED"
 WARN = "#E0703A"
 GOOD = "#2Fae7d"
 BAD = "#C03A2B"
+BRAND_RED = "#C0202B"  # brand Macro Grisa / bande di separazione
+DARK_RED = "#8E1120"   # rosso scuro per il masthead (titolo + marchio)
 
 plt.rcParams.update(
     {
@@ -173,10 +175,18 @@ def build_html(snap: Snapshot, history: pd.DataFrame | None = None) -> str:
 <title>Citrini Doomsday Scenario</title>
 <style>
   body {{ margin:0; background:#FCFCFD; color:{INK}; font-family:Inter,Aptos,'Segoe UI',Arial,sans-serif; }}
-  main {{ max-width:1040px; margin:0 auto; padding:48px 24px 72px; }}
-  h1 {{ font-size:34px; line-height:1.12; margin:0 0 8px; }}
-  .subtitle {{ color:{MUTED}; margin:0 0 20px; }}
-  h2 {{ font-size:22px; margin:42px 0 12px; }}
+  main {{ max-width:1040px; margin:0 auto; padding:32px 24px 72px; }}
+  .brandbar {{ background:#fff; border-bottom:4px solid {DARK_RED}; padding:4px 0 14px; margin-bottom:22px; }}
+  .brandbar .mark {{ display:block; color:{DARK_RED}; font-weight:800; letter-spacing:3px; font-size:14px; text-transform:uppercase; margin-bottom:5px; }}
+  .brandbar .tag {{ display:block; color:{DARK_RED}; font-size:27px; font-weight:800; line-height:1.15; }}
+  h1 {{ font-size:34px; line-height:1.12; margin:0 0 8px; font-weight:800; }}
+  .subtitle {{ color:{MUTED}; margin:0 0 20px; font-weight:600; }}
+  h2 {{ font-size:22px; margin:26px 0 12px; font-weight:800; border-left:5px solid {BRAND_RED}; padding-left:12px; }}
+  h3 {{ font-weight:800; }}
+  .redband {{ height:4px; background:{BRAND_RED}; border-radius:2px; margin:38px 0 4px; }}
+  .about {{ background:#fff; border:1px solid {GRID}; border-left:5px solid {BRAND_RED}; border-radius:8px; padding:16px 20px; margin:0 0 10px; }}
+  .about h2 {{ border:0; padding:0; margin:0 0 8px; font-size:19px; }}
+  .about p {{ margin:0 0 8px; }}
   p, li {{ font-size:15.5px; line-height:1.58; }}
   .hero {{ background:#fff; border:1px solid {GRID}; border-radius:8px; padding:18px 22px; text-align:center; }}
   .delta {{ display:inline-block; margin-top:6px; color:{MUTED}; font-size:14px; }}
@@ -198,8 +208,16 @@ def build_html(snap: Snapshot, history: pd.DataFrame | None = None) -> str:
 </head>
 <body>
 <main>
+  <div class="brandbar"><span class="mark">Macro Grisa</span><span class="tag">Citrini Doomsday Scenario · report settimanale</span></div>
   <h1>Citrini Doomsday Scenario</h1>
   <p class="subtitle">Termometro settimanale della tesi "AI Doomsday / 2028 Global Intelligence Crisis" — dati al {snap.asof}.</p>
+
+  <section class="about">
+    <h2>Cos'è questo indicatore</h2>
+    <p>Il <strong>Doomsday Scenario</strong> è un termometro settimanale (<strong>0–100</strong>) che misura quanto i dati di mercato stanno già confermando la tesi "AI Doomsday" di Citrini Research. La catena è: l'AI sostituisce il lavoro &rarr; sale la disoccupazione &rarr; crollano i consumi &rarr; si rompe il credito privato (molto esposto al settore tech/AI) &rarr; recessione e drawdown azionario. L'indicatore non prevede lo scenario: misura <em>quanto</em> i mercati lo stanno già prezzando.</p>
+    <p><strong>Come funziona:</strong> sei componenti osservabili vengono convertite in sub-punteggi 0–100 e combinate in una media pesata &mdash; <strong>deterioramento del lavoro</strong> (richieste iniziali di sussidio, 20%), <strong>stress sul credito</strong> (High Yield OAS, 20%), <strong>drawdown azionario</strong> (S&amp;P 500 dal massimo 52w, 20%), <strong>paura/volatilità</strong> (VIX, 15%), <strong>debolezza dei consumi</strong> (ciclici vs difensivi XLY/XLP, 15%) e <strong>segnale di recessione</strong> (curva 10y-2y, 10%). <strong>0</strong> = nessun segnale, <strong>100</strong> = scenario in pieno svolgimento; il punteggio complessivo definisce il <strong>regime</strong> (da Quiescente a Doomsday).</p>
+    <p><strong>Doomsday trade:</strong> accanto al termometro, un basket <strong>long/short</strong> mostra se il mercato sta ruotando verso lo scenario. <strong>LONG</strong> sui rifugi (oro, Treasury lunghi, utility, beni di prima necessità); <strong>SHORT</strong> sugli asset più vulnerabili (software, private credit/BDC, banche regionali, retail, trasporti). Se il long sovraperforma lo short, il mercato sta iniziando a prezzare il rischio.</p>
+  </section>
 
   <section class="hero">
     <img src="{_gauge(snap)}" alt="Termometro composito">
@@ -210,6 +228,7 @@ def build_html(snap: Snapshot, history: pd.DataFrame | None = None) -> str:
     {''.join(f'<div class="metric"><strong>{snap.spread[h]:+.1f}%</strong><span>Basket {h}</span></div>' for h in horizons)}
   </section>
 
+  <div class="redband"></div>
   <h2>Cosa dice questa settimana</h2>
   <p>Il termometro composito e a <strong>{snap.composite:.0f}/100</strong> ({snap.regime}). Misura quanto i
   dati di mercato stanno gia confermando la catena della tesi Citrini: shock occupazionale da AI -&gt;
@@ -218,10 +237,12 @@ def build_html(snap: Snapshot, history: pd.DataFrame | None = None) -> str:
   <strong>{snap.spread['1m']:+.1f}%</strong> nell'ultimo mese: valori positivi indicano che il mercato
   sta prezzando lo scenario.</p>
 
+  <div class="redband"></div>
   <h2>Il termometro per componente</h2>
   <img src="{_components_bar(snap)}" alt="Contributo per componente">
   {_comp_table(snap)}
 
+  <div class="redband"></div>
   <h2>Il Doomsday trade (basket long/short)</h2>
   <p>Spread fra un paniere di <strong>rifugi</strong> (oro, Treasury lunghi, utility, beni di prima
   necessita) e un paniere di <strong>settori vulnerabili</strong> alla tesi (software, private credit,
@@ -232,8 +253,10 @@ def build_html(snap: Snapshot, history: pd.DataFrame | None = None) -> str:
     <div><h3 style="margin:0 0 6px">SHORT · vulnerabili</h3>{_legs_table(snap.short_legs, horizons)}</div>
   </div>
 
+  <div class="redband"></div>
   {history_block}
 
+  <div class="redband"></div>
   <h2>Metodologia e assunzioni</h2>
   <p class="note">Indicatore prototipale a scopo informativo, <strong>non e una raccomandazione di
   investimento</strong>. I proxy, i pesi e le soglie sono scelte dichiarate in
