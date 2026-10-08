@@ -1,0 +1,120 @@
+{
+  "asof": "2026-10-08",
+  "source": "Bigdata.com",
+  "window_days": 30,
+  "subscore": 62.2,
+  "note": "Sub-punteggio 0-100 della catena della tesi Citrini, derivato dal sentiment di news/filing/transcript su Bigdata.com (https://bigdata.com). Alto = la narrativa conferma lo scenario. Calcolato da una sessione Claude con il connettore Bigdata.com; la pipeline CI non puo chiamare il connettore e legge questo file. Valutazione assistita da LLM, non misura meccanica: rigenerare periodicamente con scripts/refresh_sentiment.py.",
+  "themes": [
+    {
+      "key": "ai_labor",
+      "label": "Sostituzione del lavoro da AI",
+      "weight": 0.3,
+      "score": 65,
+      "note": "Layoff white-collar ampi e in accelerazione (131.382 licenziamenti tech YTD su 314 aziende; Amazon ~30k cumulati + nuovo round, Oracle 21k+, Microsoft 28k/anno, FICO -15%, HubSpot -7%, HSBC wealth). Stanford: -19% occupazione 22-25enni nei lavori piu esposti all'AI. Contrappeso: OECD solo 1% cita l'AI come causa primaria, +56,9k posti a settembre (Revelio), mercato 'low-hire low-fire', adozione AI -48% dal picco. Segnale elevato ma il mercato del lavoro aggregato non e rotto.",
+      "evidence": [
+        {
+          "headline": "Amazon layoffs: E-commerce giant cuts jobs in Stores business amid AI spending push",
+          "source": "Indian Express",
+          "date": "2026-10-08",
+          "url": "https://app.bigdata.com/documents/F85C0D0EDE7B821ED89939BE02285BF9?cnum=3"
+        },
+        {
+          "headline": "Fair Isaac to Cut 15% of Workforce",
+          "source": "MT Newswires",
+          "date": "2026-10-06",
+          "url": "https://app.bigdata.com/documents/AFC2F971F85C507486D92267973FD458?cnum=1"
+        },
+        {
+          "headline": "Fearing AI, workers go back to school seeking jobs that still need a human touch",
+          "source": "The Washington Post",
+          "date": "2026-09-30",
+          "url": "https://app.bigdata.com/documents/AF86BA37F53245F679354EE0980F0EEC?cnum=2"
+        }
+      ]
+    },
+    {
+      "key": "software",
+      "label": "Stress sul settore software",
+      "weight": 0.2,
+      "score": 65,
+      "note": "Il settore e l'epicentro della tesi: HubSpot -45% YTD e taglio del 7%, Workday al terzo round di layoff, Oracle nuovi tagli. 'Vibe coding' e low/no-code erodono la domanda di sviluppo custom (Appian ammette la pressione competitiva). Contrappeso: il mercato del custom software e dato ancora in crescita (+8,77% CAGR) da alcune fonti.",
+      "evidence": [
+        {
+          "headline": "HubSpot axes 660 jobs as AI reshapes company",
+          "source": "Msn",
+          "date": "2026-10-08",
+          "url": "https://app.bigdata.com/documents/0BF9F7685B7F9B33A4049B93BB841E31?cnum=1"
+        },
+        {
+          "headline": "Workday's axe falls again, and this time it lands on the tech team",
+          "source": "AOL.com",
+          "date": "2026-10-02",
+          "url": "https://app.bigdata.com/documents/3B41638062DFCD0403BF6947E3145AB3?cnum=1"
+        }
+      ]
+    },
+    {
+      "key": "private_credit",
+      "label": "Stress sul private credit / BDC",
+      "weight": 0.25,
+      "score": 72,
+      "note": "Parte piu calda della catena. Fitch: default rate a 12 mesi 6,3% (record), 14 default ad agosto vs 3 a luglio, ~47% 'soft'/PIK. Morgan Stanley stima default 8% H2'26-H1'27; PIMCO ~20% includendo i PIK. CCC pubblico a 1.007 bp (distressed), riscatti cumulati >15 mld $, deflussi netti BDC 4,8 mld $ in Q2, concentrazione su software. Contrappeso: stress 'concentrato, non sistemico', alcuni BDC in stabilizzazione.",
+      "evidence": [
+        {
+          "headline": "6.3%! A New High in Default Rate: Is the Real Risk in Private Credit Redemption or Refinancing?",
+          "source": "Wallstreetcn",
+          "date": "2026-09-25",
+          "url": "https://app.bigdata.com/documents/78AD979F08B3777E7BAB13257A43E044?cnum=2"
+        },
+        {
+          "headline": "Junk Bonds Cross Into Distressed Territory: High-Yield Funds Now Hold Bankruptcy Bets",
+          "source": "Tech Times",
+          "date": "2026-10-01",
+          "url": "https://app.bigdata.com/documents/FB93E25F785618AA32910B95293DA83E?cnum=9"
+        },
+        {
+          "headline": "Private credit defaults rise, led by small companies, healthcare - Houlihan Lokey",
+          "source": "Yahoo! Finance",
+          "date": "2026-09-15",
+          "url": "https://app.bigdata.com/documents/D8701BB84D1B2F9D4B82802834688937?cnum=1"
+        }
+      ]
+    },
+    {
+      "key": "payments",
+      "label": "Stress sui payment processor",
+      "weight": 0.1,
+      "score": 35,
+      "note": "Segnale debole: la cronaca e dominata da commercio 'agentico', MDR su UPI in India e supply chain dei chip delle carte, non da un crollo dei consumi. PayPal branded checkout +2% (in stabilizzazione), Venmo +14%. Nessun segnale forte di stress da spesa al consumo.",
+      "evidence": [
+        {
+          "headline": "PayPal (PYPL) Has Fallen From Grace. Could AI Commerce Be Its Way Back?",
+          "source": "Yahoo! Finance",
+          "date": "2026-10-06",
+          "url": "https://app.bigdata.com/documents/00E87F5E385FEBCF821990D23A8EE341?cnum=2"
+        }
+      ]
+    },
+    {
+      "key": "logistics",
+      "label": "Debolezza di logistica / consumi",
+      "weight": 0.15,
+      "score": 55,
+      "note": "Debolezza reale ma in parte strutturale: UPS -9% assunzioni stagionali (2o anno), 30k tagli + 24 siti chiusi, Royal Mail 2.500 tagli, Freight Distress Report ~1.850 posti, chiusure diffuse di contractor Amazon, assunzioni stagionali retail 'sottili' (Challenger). Contrappeso: domanda al consumo ancora 'resiliente' (LMI), scorte in aumento; parte dei tagli UPS legata al de-risking su Amazon.",
+      "evidence": [
+        {
+          "headline": "UPS will reduce its seasonal hiring for the second consecutive year",
+          "source": "Boursorama/Reuters",
+          "date": "2026-10-07",
+          "url": "https://app.bigdata.com/documents/52ED24061ECA383E135635C28A4AC40C?cnum=1"
+        },
+        {
+          "headline": "Freight Distress Report: Logistics, manufacturing cuts put 1,850 jobs on chopping block",
+          "source": "Yahoo! Finance",
+          "date": "2026-09-28",
+          "url": "https://app.bigdata.com/documents/96654C5A6DD7F07B908603C90EAAB17D?cnum=1"
+        }
+      ]
+    }
+  ]
+}

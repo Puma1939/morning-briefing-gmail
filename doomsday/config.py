@@ -93,6 +93,30 @@ COMPONENTS = [
 ]
 
 # --------------------------------------------------------------------------- #
+# 7o componente: narrativa AI-crisis (sentiment da Bigdata.com)               #
+# --------------------------------------------------------------------------- #
+# Componente qualitativo che misura quanto la cronaca (news/filing/transcript)
+# stia confermando la catena della tesi. Non si ricava da una serie storica ma
+# dal sentiment interrogato sul connettore Bigdata.com (https://bigdata.com),
+# calcolato da una sessione Claude e salvato in doomsday/sentiment.json (la
+# pipeline CI non puo chiamare il connettore). `kind="external"`: il valore 0-100
+# e fornito direttamente, senza scalatura. Se il file manca o e piu vecchio di
+# `max_age_days`, il componente viene escluso e il termometro si rinormalizza
+# sui componenti rimasti.
+SENTIMENT = {
+    "key": "sentiment",
+    "label": "Narrativa AI-crisis (Bigdata.com)",
+    "desc": "Sentiment su lavoro AI, software, private credit, pagamenti e logistica dalla cronaca su Bigdata.com.",
+    "weight": 0.25,          # peso effettivo ~20% una volta rinormalizzato coi 6 di mercato
+    "kind": "external",
+    "max_age_days": 14,      # oltre questa eta il dato e considerato obsoleto ed escluso
+}
+
+# Percorso del file prodotto dalla sessione Claude e letto dalla pipeline.
+from pathlib import Path as _Path  # noqa: E402
+SENTIMENT_FILE = _Path(__file__).resolve().parent / "sentiment.json"
+
+# --------------------------------------------------------------------------- #
 # Il basket "Doomsday trade" (long difensivi / short vulnerabili)             #
 # --------------------------------------------------------------------------- #
 # Esprime la tesi come spread: se lo scenario si materializza, il leg LONG
