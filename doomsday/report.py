@@ -27,6 +27,7 @@ WARN = "#E0703A"
 GOOD = "#2Fae7d"
 BAD = "#C03A2B"
 BRAND_RED = "#C0202B"  # brand Macro Grisa / bande di separazione
+DARK_RED = "#8E1120"   # rosso scuro per il masthead (titolo + marchio)
 
 plt.rcParams.update(
     {
@@ -175,9 +176,9 @@ def build_html(snap: Snapshot, history: pd.DataFrame | None = None) -> str:
 <style>
   body {{ margin:0; background:#FCFCFD; color:{INK}; font-family:Inter,Aptos,'Segoe UI',Arial,sans-serif; }}
   main {{ max-width:1040px; margin:0 auto; padding:32px 24px 72px; }}
-  .brandbar {{ background:{BRAND_RED}; color:#fff; padding:11px 18px; border-radius:6px; display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin-bottom:22px; }}
-  .brandbar .mark {{ font-weight:800; letter-spacing:2px; font-size:15px; text-transform:uppercase; }}
-  .brandbar .tag {{ color:#ffd9d4; font-size:12.5px; }}
+  .brandbar {{ background:#fff; border-bottom:4px solid {DARK_RED}; padding:4px 0 14px; margin-bottom:22px; }}
+  .brandbar .mark {{ display:block; color:{DARK_RED}; font-weight:800; letter-spacing:3px; font-size:14px; text-transform:uppercase; margin-bottom:5px; }}
+  .brandbar .tag {{ display:block; color:{DARK_RED}; font-size:27px; font-weight:800; line-height:1.15; }}
   h1 {{ font-size:34px; line-height:1.12; margin:0 0 8px; font-weight:800; }}
   .subtitle {{ color:{MUTED}; margin:0 0 20px; font-weight:600; }}
   h2 {{ font-size:22px; margin:26px 0 12px; font-weight:800; border-left:5px solid {BRAND_RED}; padding-left:12px; }}
