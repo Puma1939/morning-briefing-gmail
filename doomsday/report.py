@@ -151,6 +151,44 @@ def _comp_table(snap: Snapshot) -> str:
     )
 
 
+def _sentiment_block(snap: Snapshot) -> str:
+    """Sezione dedicata al 7o componente (narrativa AI-crisis da Bigdata.com):
+    breakdown per tema con punteggio, peso ed evidenze citate. Vuota se assente."""
+    s = snap.sentiment
+    if not s:
+        return (
+            '<h2>Narrativa AI-crisis (Bigdata.com)</h2>'
+            '<p class="note">Layer sentiment non disponibile o obsoleto in questa esecuzione: '
+            'il termometro e stato calcolato sui soli componenti di mercato. Rigenerare '
+            '<code>doomsday/sentiment.json</code> con <code>scripts/refresh_sentiment.py</code>.</p>'
+        )
+    rows = []
+    for t in s["themes"]:
+        ev = "".join(
+            f'<li><a href="{e["url"]}">{e["headline"]}</a> '
+            f'<small>{e.get("source","")} · {e.get("date","")}</small></li>'
+            for e in t.get("evidence", [])
+        )
+        ev_html = f"<ul class='ev'>{ev}</ul>" if ev else ""
+        rows.append(
+            f"<tr><td><strong>{t['label']}</strong>{ev_html}</td>"
+            f"<td>{float(t['weight']):.0%}</td>"
+            f"<td><strong>{float(t['score']):.0f}</strong></td></tr>"
+        )
+    age = s.get("age_days")
+    age_txt = f" · dato di {age}g fa" if age is not None else ""
+    return (
+        '<h2>Narrativa AI-crisis (Bigdata.com)</h2>'
+        f'<p>Sub-punteggio <strong>{s["subscore"]:.0f}/100</strong> dalla cronaca degli ultimi '
+        f'{s.get("window_days","~30")} giorni (news, filing, transcript) interrogata su '
+        f'<a href="https://bigdata.com">Bigdata.com</a>{age_txt}. Misura quanto la catena della '
+        'tesi Citrini si stia materializzando nei fatti, non nei prezzi: utile quando i segnali di '
+        'mercato sono ancora benigni ma la narrativa accelera.</p>'
+        "<table><thead><tr><th>Tema</th><th>Peso</th><th>Punteggio</th></tr></thead>"
+        f"<tbody>{''.join(rows)}</tbody></table>"
+    )
+
+
 def build_html(snap: Snapshot, history: pd.DataFrame | None = None) -> str:
     horizons = list(config.HORIZONS.keys())
     history_chart = _history_line(history)
@@ -201,6 +239,9 @@ def build_html(snap: Snapshot, history: pd.DataFrame | None = None) -> str:
   td small {{ color:{MUTED}; }}
   .note {{ color:{MUTED}; font-size:13px; }}
   .two {{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }}
+  ul.ev {{ margin:6px 0 0; padding-left:18px; }}
+  ul.ev li {{ font-size:12.5px; line-height:1.4; color:{MUTED}; margin-bottom:2px; }}
+  ul.ev a {{ color:{BRAND_RED}; text-decoration:none; }}
   @media (max-width:760px) {{ .metrics {{ grid-template-columns:repeat(2,1fr); }} .two {{ grid-template-columns:1fr; }} h1 {{ font-size:28px; }} }}
   @page {{ size:A4; margin:16mm 14mm; }}
   @media print {{ main {{ padding:0; max-width:none; }} img, table, .metric, .hero {{ break-inside:avoid; }} }}
@@ -215,7 +256,7 @@ def build_html(snap: Snapshot, history: pd.DataFrame | None = None) -> str:
   <section class="about">
     <h2>Cos'è questo indicatore</h2>
     <p>Il <strong>Doomsday Scenario</strong> è un termometro settimanale (<strong>0–100</strong>) che misura quanto i dati di mercato stanno già confermando la tesi "AI Doomsday" di Citrini Research. La catena è: l'AI sostituisce il lavoro &rarr; sale la disoccupazione &rarr; crollano i consumi &rarr; si rompe il credito privato (molto esposto al settore tech/AI) &rarr; recessione e drawdown azionario. L'indicatore non prevede lo scenario: misura <em>quanto</em> i mercati lo stanno già prezzando.</p>
-    <p><strong>Come funziona:</strong> sei componenti osservabili vengono convertite in sub-punteggi 0–100 e combinate in una media pesata &mdash; <strong>deterioramento del lavoro</strong> (richieste iniziali di sussidio, 20%), <strong>stress sul credito</strong> (High Yield OAS, 20%), <strong>drawdown azionario</strong> (S&amp;P 500 dal massimo 52w, 20%), <strong>paura/volatilità</strong> (VIX, 15%), <strong>debolezza dei consumi</strong> (ciclici vs difensivi XLY/XLP, 15%) e <strong>segnale di recessione</strong> (curva 10y-2y, 10%). <strong>0</strong> = nessun segnale, <strong>100</strong> = scenario in pieno svolgimento; il punteggio complessivo definisce il <strong>regime</strong> (da Quiescente a Doomsday).</p>
+    <p><strong>Come funziona:</strong> sei componenti osservabili vengono convertite in sub-punteggi 0–100 e combinate in una media pesata &mdash; <strong>deterioramento del lavoro</strong> (richieste iniziali di sussidio, 20%), <strong>stress sul credito</strong> (High Yield OAS, 20%), <strong>drawdown azionario</strong> (S&amp;P 500 dal massimo 52w, 20%), <strong>paura/volatilità</strong> (VIX, 15%), <strong>debolezza dei consumi</strong> (ciclici vs difensivi XLY/XLP, 15%) e <strong>segnale di recessione</strong> (curva 10y-2y, 10%). A queste si aggiunge un settimo componente qualitativo &mdash; <strong>narrativa AI-crisis</strong> &mdash; dal sentiment di news, filing e transcript interrogati su <a href="https://bigdata.com">Bigdata.com</a>. <strong>0</strong> = nessun segnale, <strong>100</strong> = scenario in pieno svolgimento; il punteggio complessivo definisce il <strong>regime</strong> (da Quiescente a Doomsday).</p>
     <p><strong>Doomsday trade:</strong> accanto al termometro, un basket <strong>long/short</strong> mostra se il mercato sta ruotando verso lo scenario. <strong>LONG</strong> sui rifugi (oro, Treasury lunghi, utility, beni di prima necessità); <strong>SHORT</strong> sugli asset più vulnerabili (software, private credit/BDC, banche regionali, retail, trasporti). Se il long sovraperforma lo short, il mercato sta iniziando a prezzare il rischio.</p>
   </section>
 
@@ -243,6 +284,9 @@ def build_html(snap: Snapshot, history: pd.DataFrame | None = None) -> str:
   {_comp_table(snap)}
 
   <div class="redband"></div>
+  {_sentiment_block(snap)}
+
+  <div class="redband"></div>
   <h2>Il Doomsday trade (basket long/short)</h2>
   <p>Spread fra un paniere di <strong>rifugi</strong> (oro, Treasury lunghi, utility, beni di prima
   necessita) e un paniere di <strong>settori vulnerabili</strong> alla tesi (software, private credit,
@@ -261,9 +305,13 @@ def build_html(snap: Snapshot, history: pd.DataFrame | None = None) -> str:
   <p class="note">Indicatore prototipale a scopo informativo, <strong>non e una raccomandazione di
   investimento</strong>. I proxy, i pesi e le soglie sono scelte dichiarate in
   <code>doomsday/config.py</code> e vanno ritarate sui propri criteri. Fonti gratuite senza API key:
-  serie macro da FRED (St. Louis Fed), prezzi da Stooq. Il punteggio composito e la media pesata dei
-  sub-punteggi 0-100 di ciascuna componente. Rigenerato dalla pipeline
-  <code>scripts/build_doomsday.py</code>.</p>
+  serie macro da FRED (St. Louis Fed), prezzi da Stooq. Il 7o componente
+  &mdash; <strong>narrativa AI-crisis</strong> &mdash; deriva dal sentiment di news, filing e transcript
+  della catena della tesi interrogati su <a href="https://bigdata.com">Bigdata.com</a>: viene calcolato da
+  una sessione Claude (il connettore non e richiamabile dalla pipeline) e salvato in
+  <code>doomsday/sentiment.json</code>; se manca o e obsoleto viene escluso e il termometro si rinormalizza
+  sui componenti rimasti. Il punteggio composito e la media pesata rinormalizzata dei sub-punteggi 0-100 di
+  ciascuna componente. Rigenerato dalla pipeline <code>scripts/build_doomsday.py</code>.</p>
 </main>
 </body>
 </html>
